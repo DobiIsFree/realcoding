@@ -24,24 +24,10 @@ public class UrlShortenerController {
         this.urlShortenerService = urlShortenerService;
     }
 
-    @GetMapping("health/{n}")
-    public Mono<String> healthCheck(@PathVariable int n) {
-        return fib(n).map(String::valueOf);
-    }
-
-    private Mono<Integer> fib(int n){
-        if(n==0){
-            return Mono.just(0);
-        }
-        if(n==1 || n==2){
-            return Mono.just(1);
-        }
-
-        Mono<Integer> f0 = fib(n-1);
-        Mono<Integer> f1 = fib(n-2);
-        return Mono.zip(f0, f1, (n0, n1) -> {
-            return n0 + n1;
-        });
+    @GetMapping("health")
+    public Mono<String> healthCheck() {
+        // For basic tutorial
+        return Mono.just("Hello World");
     }
 
     @GetMapping("{encoded}")
@@ -52,8 +38,8 @@ public class UrlShortenerController {
         return urlShortenerService
                 .unshortenUrl(encoded)
                 .map(uri -> ResponseEntity.status(HttpStatus.FOUND)
-                        .location(uri)
-                        .build())
+                                          .location(uri)
+                                          .build())
                 .defaultIfEmpty(ResponseEntity.status(HttpStatus.NOT_FOUND).build());
     }
 
